@@ -25,20 +25,13 @@ def family_table():
     return df
 
 
-def family_table():
+def family_history_table():
     con = sqlite3.connect(r"\\projects\StranaDev_Family\999 BIM\FamilyManager\family_db.db")
     df = pd.read_sql_query("SELECT * FROM family_history", con)
     return df
 
 
 def table_for_time_line_graf(df): # требуется сосчитать сумму по столбцам такая то команда такая то дата число использований
-    print(df.groupby('Дата')['Имя команды'].count())
-
-    print(df.groupby('Дата').agg({
-        "Имя команды": "unique",
-    }).reset_index())
-
-    print(pd.pivot_table(df, values='Имя команды', index=['Дата'], aggfunc=np.sum, fill_value=0))
     return df
 
 

@@ -6,12 +6,14 @@ import pandas as pd
 
 import plotly.express as px
 
-from GetStaticticDF import statistic_table, table_for_time_line_graf
+from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
+FamilyHistoryTable = family_history_table()
 app.layout = html.Div([
+
     html.H3(children='График использования команд', style={'textAlign': 'center'}),
     dcc.Graph(
         id='CommandClicked',
@@ -21,11 +23,42 @@ app.layout = html.Div([
             ],
         }
     ),
+
     html.H3(children='График использования команд на временной линии', style={'textAlign': 'center'}),
     dcc.Dropdown(TimeLineStat['Имя команды'].unique()[1:], 'Разместить эл-т', id='dropdown-selection'),
     dcc.Graph(id='graph-content'),
+
     html.H3(children='Число внесенных изменений от Bim-специалистов', style={'textAlign': 'center'}),
+    dcc.Graph(
+        id='FamilyHistory',
+        figure={
+            'data': [
+                {'x': FamilyHistoryTable['Creater'], 'type': 'histogram'}
+            ],
+        }
+    ),
+
+    html.H3(children='Количество использованных команд пользователем', style={'textAlign': 'center'}),
+    dcc.Graph(
+        id='FamilyHistory',
+        figure={
+            'data': [
+                {'x': FullTable['UserName'], 'type': 'histogram'}
+            ],
+        }
+    ),
+
+    html.H3(children='Количество использованных команд по проектам', style={'textAlign': 'center'}),
+    dcc.Graph(
+        id='FamilyHistory',
+        figure={
+            'data': [
+                {'x': FullTable['Project'], 'type': 'histogram'}
+            ],
+        }
+    ),
 ])
+
 
 @callback(
     Output('graph-content', 'figure'),
@@ -33,6 +66,7 @@ app.layout = html.Div([
 def update_graph(value):
     dff = TimeLineStat[FullTable['Имя команды'] == value]
     return px.line(dff, x='Дата', y='Имя команды')
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
