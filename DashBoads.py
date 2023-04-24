@@ -14,7 +14,6 @@ FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
 FamilyHistoryTable = family_history_table()
 
-
 app.layout = html.Div([
     html.Div(
         children=[
@@ -30,14 +29,14 @@ app.layout = html.Div([
         className="header",
     ),
 
-    html.P(
-        children="Аналитика использования менеджера семейств\n"
-                 "Первая часть - активность проектировщиков\n"
-                 "Вторая часть - активность BIM-специалистов\n",
-        className="header-description",
-    ),
+    #   ПЕРВАЯ ЧАСТЬ РАЗДЕЛА
+    html.H1(children="Часть первая - анализ активности использования менеджера семейств проектировщиками",
+            className="header-title_black"),
 
     html.H3(children='График использования команд', style={'textAlign': 'center'}),
+
+    html.H3(children='На данном графике можно увидеть сколько раз и какая команда была использована',
+            className="header-description_black"),
     dcc.Graph(
         id='CommandClicked',
         figure={
@@ -47,17 +46,11 @@ app.layout = html.Div([
         }
     ),
 
-    html.H3(children='Число внесенных изменений от Bim-специалистов', style={'textAlign': 'center'}),
-    dcc.Graph(
-        id='FamilyHistory',
-        figure={
-            'data': [
-                {'x': FamilyHistoryTable['Creater'], 'type': 'histogram'}
-            ],
-        }
-    ),
-
     html.H3(children='Количество использованных команд пользователем', style={'textAlign': 'center'}),
+    html.H3(children='На данном графике можно увидеть сколько раз '
+                     'и какой пользователь пользовался командами данного плагина',
+            className="header-description_black"),
+
     dcc.Graph(
         id='FamilyHistory1',
         figure={
@@ -69,6 +62,8 @@ app.layout = html.Div([
     ),
 
     html.H3(children='Количество использованных команд по проектам', style={'textAlign': 'center'}),
+    html.H3(children='На данном графике можно посмотреть на активность использования данного плагина в проектах',
+            className="header-description_black"),
     dcc.Graph(
         id='FamilyHistory2',
         style={'margin-bottom': 10},
@@ -77,7 +72,7 @@ app.layout = html.Div([
             'data': [
                 {'x': FullTable['Project'], 'type': 'histogram'}
             ],
-            'layout': {'height': 800},
+            'layout': {'height': 500},
         },
     ),
 
@@ -139,7 +134,21 @@ app.layout = html.Div([
     html.H3(children='График использования команд на временной линии', style={'textAlign': 'center'}),
     html.H3(children='⠀', style={'textAlign': 'center'}),
     dcc.Dropdown(TimeLineStat['Имя команды'].unique(), TimeLineStat['Имя команды'].unique()[0],
-                 id='dropdown-selection'), dcc.Graph(id='graph-content')
+                 id='dropdown-selection'), dcc.Graph(id='graph-content'),
+
+    #   ВТОРАЯ ЧАСТЬ РАЗДЕЛА
+    html.H1(children="Часть вторая - анализ активности работы BIM-специалистов",
+            className="header-title_black"),
+
+    html.H3(children='Число внесенных изменений от Bim-специалистов', style={'textAlign': 'center'}),
+    dcc.Graph(
+        id='FamilyHistory',
+        figure={
+            'data': [
+                {'x': FamilyHistoryTable['Creater'], 'type': 'histogram'}
+            ],
+        }
+    ),
 ])
 
 
