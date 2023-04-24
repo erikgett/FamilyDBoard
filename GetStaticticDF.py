@@ -4,6 +4,9 @@ import numpy as np
 import pandas as pd
 import pprint
 
+from pandas import Series
+
+
 def statistic_table():
     con = sqlite3.connect(r"\\projects\StranaDev_Family\999 BIM\FamilyManager\Статистика\FM_statistics.db")
     df = pd.read_sql_query("SELECT * FROM UserAction", con)
@@ -16,6 +19,7 @@ def statistic_table():
         .replace("SelectTypeInPJ", "Выделить тип в проекте").replace("SelectTypeInPJinActiveView",
                                                                      "Выделить тип на виде") \
         .replace("UpdateTypesInPJ", "Обновить сем-во").replace("LoadSelectedTypesInPJ", "Загрузить выбранные типы")
+    df['Project'] = df.apply(lambda row: str(row[5]).split("\\")[-1].split(".")[0], axis=1)
     return df
 
 
@@ -28,12 +32,17 @@ def family_table():
 def family_history_table():
     con = sqlite3.connect(r"\\projects\StranaDev_Family\999 BIM\FamilyManager\family_db.db")
     df = pd.read_sql_query("SELECT * FROM family_history", con)
+
     return df
 
 
 def table_for_time_line_graf(df): # требуется сосчитать сумму по столбцам такая то команда такая то дата число использований
+
     return df
 
 
+
+
 if __name__ == '__main__':
+    statistic_table()
     table_for_time_line_graf(statistic_table())

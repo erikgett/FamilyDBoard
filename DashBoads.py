@@ -57,6 +57,8 @@ app.layout = html.Div([
             ],
         }
     ),
+
+    html.H3(children='Динамика', style={'textAlign': 'center'}),
 ])
 
 
