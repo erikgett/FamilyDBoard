@@ -134,4 +134,8 @@ def update_graph(value):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    arelocal = False
+    if arelocal:
+        app.run_server(debug=True)
+    else:
+        app.run_server(debug=False, host='0.0.0.0')
