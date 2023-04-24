@@ -14,6 +14,11 @@ FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
 FamilyHistoryTable = family_history_table()
 
+dff = pd.DataFrame(dict(
+    x=[1, 3, 2, 4],
+    y=[1, 2, 3, 4]
+))
+
 app.layout = html.Div([
 
     html.H3(children='График использования команд', style={'textAlign': 'center'}),
@@ -38,7 +43,7 @@ app.layout = html.Div([
 
     html.H3(children='Количество использованных команд пользователем', style={'textAlign': 'center'}),
     dcc.Graph(
-        id='FamilyHistory',
+        id='FamilyHistory1',
         figure={
             'data': [
                 {'x': FullTable['UserName'], 'type': 'histogram'},
@@ -49,7 +54,7 @@ app.layout = html.Div([
 
     html.H3(children='Количество использованных команд по проектам', style={'textAlign': 'center'}),
     dcc.Graph(
-        id='FamilyHistory',
+        id='FamilyHistory2',
         style={'margin-bottom': 10},
         figure={
 
@@ -117,8 +122,15 @@ app.layout = html.Div([
     html.H3(children='⠀', style={'textAlign': 'center'}),
     html.H3(children='График использования команд на временной линии', style={'textAlign': 'center'}),
     html.H3(children='⠀', style={'textAlign': 'center'}),
+    dcc.Dropdown(TimeLineStat['Имя команды'].unique(), TimeLineStat['Имя команды'].unique()[0], id='dropdown-selection'),
+    dcc.Graph(id='graph-content')
 ])
 
+
+@callback(Output('graph-content', 'figure'), Input('dropdown-selection', 'value'))
+def update_graph(value):
+    dd = TimeLineStat[TimeLineStat['Имя команды'] == value]
+    return px.line(dd, x='Дата', y='Число использований')
 
 if __name__ == '__main__':
     app.run_server(debug=True)
