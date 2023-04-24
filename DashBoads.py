@@ -122,8 +122,8 @@ app.layout = html.Div([
     html.H3(children='⠀', style={'textAlign': 'center'}),
     html.H3(children='График использования команд на временной линии', style={'textAlign': 'center'}),
     html.H3(children='⠀', style={'textAlign': 'center'}),
-    dcc.Dropdown(TimeLineStat['Имя команды'].unique(), TimeLineStat['Имя команды'].unique()[0], id='dropdown-selection'),
-    dcc.Graph(id='graph-content')
+    dcc.Dropdown(TimeLineStat['Имя команды'].unique(), TimeLineStat['Имя команды'].unique()[0],
+                 id='dropdown-selection'), dcc.Graph(id='graph-content')
 ])
 
 
@@ -131,6 +131,7 @@ app.layout = html.Div([
 def update_graph(value):
     dd = TimeLineStat[TimeLineStat['Имя команды'] == value]
     return px.line(dd, x='Дата', y='Число использований')
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
