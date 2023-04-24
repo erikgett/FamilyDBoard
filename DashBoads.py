@@ -9,17 +9,33 @@ import plotly.express as px
 
 from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.LUX])
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
 FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
 FamilyHistoryTable = family_history_table()
 
-dff = pd.DataFrame(dict(
-    x=[1, 3, 2, 4],
-    y=[1, 2, 3, 4]
-))
 
 app.layout = html.Div([
+    html.Div(
+        children=[
+            html.P(children="🏢", className="header-emoji"),
+            html.H1(children="Менеджер семейств", className="header-title"),
+            html.P(
+                children="Аналитика использования менеджера семейств\n"
+                         "Первая часть - активность проектировщиков\n"
+                         "Вторая часть - активность BIM-специалистов\n",
+                className="header-description",
+            )
+        ],
+        className="header",
+    ),
+
+    html.P(
+        children="Аналитика использования менеджера семейств\n"
+                 "Первая часть - активность проектировщиков\n"
+                 "Вторая часть - активность BIM-специалистов\n",
+        className="header-description",
+    ),
 
     html.H3(children='График использования команд', style={'textAlign': 'center'}),
     dcc.Graph(
@@ -134,7 +150,7 @@ def update_graph(value):
 
 
 if __name__ == '__main__':
-    arelocal = False
+    arelocal = True
     if arelocal:
         app.run_server(debug=True)
     else:
