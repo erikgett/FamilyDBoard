@@ -3,11 +3,11 @@ import plotly.express as px
 import pandas as pd
 
 
-
 app = Dash(__name__)
 
 from dash import dcc
 
+app.layout = html.Div([
 dcc.Graph(
     figure={
         'data': [
@@ -18,7 +18,7 @@ dcc.Graph(
             'title': 'Dash Data Visualization'
         }
     }
-)
+)])
 
 if __name__ == '__main__':
     app.run_server(debug=True)
