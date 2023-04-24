@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 from dash import dcc, callback, Output, Input
 from dash import html
 import pandas as pd
+from dash import dash_table
 
 import plotly.express as px
 
@@ -24,10 +25,6 @@ app.layout = html.Div([
         }
     ),
 
-    html.H3(children='График использования команд на временной линии', style={'textAlign': 'center'}),
-    dcc.Dropdown(TimeLineStat['Имя команды'].unique()[1:], 'Разместить эл-т', id='dropdown-selection'),
-    dcc.Graph(id='graph-content'),
-
     html.H3(children='Число внесенных изменений от Bim-специалистов', style={'textAlign': 'center'}),
     dcc.Graph(
         id='FamilyHistory',
@@ -43,7 +40,8 @@ app.layout = html.Div([
         id='FamilyHistory',
         figure={
             'data': [
-                {'x': FullTable['UserName'], 'type': 'histogram'}
+                {'x': FullTable['UserName'], 'type': 'histogram'},
+
             ],
         }
     ),
@@ -51,14 +49,44 @@ app.layout = html.Div([
     html.H3(children='Количество использованных команд по проектам', style={'textAlign': 'center'}),
     dcc.Graph(
         id='FamilyHistory',
+        style={'margin-bottom': 10},
         figure={
+
             'data': [
                 {'x': FullTable['Project'], 'type': 'histogram'}
+            ],
+            'layout': {'height': 800},
+        },
+    ),
+
+    html.H3(children='⠀', style={'textAlign': 'center'}),
+    html.H3(children='Динамика использования команд', style={'textAlign': 'center'}),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
+    dash_table.DataTable(TimeLineStat.to_dict('records'), [{"name": i, "id": i} for i in TimeLineStat.columns]),
+
+    html.H3(children='⠀', style={'textAlign': 'center'}),
+    html.H3(children='График использования на временной линии', style={'textAlign': 'center'}),
+    dcc.Graph(
+        id='UseAllComandInTimeLine',
+        figure={
+            'data': [
+                {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить выбранные типы']['Дата'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить выбранные типы']['Число использований'].tolist(),
+                 'type': 'histogram', 'name': 'Загрузить выбранные типы'},
+
+                {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Разместить эл-т']['Дата'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Разместить эл-т'][
+                     'Число использований'].tolist(),
+                 'type': 'histogram', 'name': 'Разместить эл-т'},
             ],
         }
     ),
 
-    html.H3(children='Динамика', style={'textAlign': 'center'}),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
+    html.H3(children='График использования команд на временной линии', style={'textAlign': 'center'}),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
+    dcc.Dropdown(TimeLineStat['Имя команды'].unique(), 'Загрузить выбранные типы', id='dropdown-selection'),
+    dcc.Graph(id='graph-content'),
 ])
 
 
@@ -67,8 +95,11 @@ app.layout = html.Div([
     Input('dropdown-selection', 'value'))
 def update_graph(value):
     dff = TimeLineStat[FullTable['Имя команды'] == value]
-    return px.line(dff, x='Дата', y='Имя команды')
+    return px.line(dff, x='Дата', y='Число использований')
 
 
 if __name__ == '__main__':
+    print(TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить выбранные типы']['Дата'].tolist())
+    print(TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить выбранные типы']['Число использований'].tolist())
     app.run_server(debug=True)
+
