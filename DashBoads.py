@@ -75,31 +75,38 @@ app.layout = html.Div([
                  'type': 'bar', 'name': 'Разместить эл-т'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Обновить все сем-ва']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Обновить все сем-ва']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Обновить все сем-ва']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Обновить все сем-ва'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить материалы']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить материалы']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить материалы']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Загрузить материалы'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Выбрать типы и загрузить']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выбрать типы и загрузить']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выбрать типы и загрузить']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Выбрать типы и загрузить'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить все типы сем-ва']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить все типы сем-ва']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить все типы сем-ва']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Выделить все типы сем-ва'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить все типы сем-ва на виде']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить все типы сем-ва на виде']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить все типы сем-ва на виде']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Выделить все типы сем-ва на виде'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить тип в проекте']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить тип в проекте']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить тип в проекте']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Выделить тип в проекте'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить тип на виде']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить тип на виде']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Выделить тип на виде']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Выделить тип на виде'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Обновить сем-во']['Дата'].tolist(),
@@ -107,7 +114,8 @@ app.layout = html.Div([
                  'type': 'bar', 'name': 'Обновить сем-во'},
 
                 {'x': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить выбранные типы']['Дата'].tolist(),
-                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить выбранные типы']['Число использований'].tolist(),
+                 'y': TimeLineStat[TimeLineStat['Имя команды'] == 'Загрузить выбранные типы']
+                 ['Число использований'].tolist(),
                  'type': 'bar', 'name': 'Загрузить выбранные типы'},
             ],
         }
