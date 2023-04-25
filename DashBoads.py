@@ -4,15 +4,17 @@ from dash import dcc, callback, Output, Input
 from dash import html
 import pandas as pd
 from dash import dash_table
-
+from datetime import timedelta
 import plotly.express as px
 
-from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table
+from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table, table_for_bim_time_line_graf
 
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
 FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
 FamilyHistoryTable = family_history_table()
+TimeLineBIMStat = table_for_bim_time_line_graf(FamilyHistoryTable)
+
 
 app.layout = html.Div([
     html.Div(
@@ -141,6 +143,9 @@ app.layout = html.Div([
             className="header-title_black"),
 
     html.H3(children='Число внесенных изменений от Bim-специалистов', style={'textAlign': 'center'}),
+    html.H3(children='На данном графике можно посмотреть кто и когда вносил изменения в репозиторий',
+            className="header-description_black"),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
     dcc.Graph(
         id='FamilyHistory',
         figure={
@@ -149,6 +154,18 @@ app.layout = html.Div([
             ],
         }
     ),
+
+    html.H3(children='Число внесенных изменений от Bim-специалиста для конкретного семейства', style={'textAlign': 'center'}),
+    html.H3(children='На данном графике можно посмотреть какие конкретного семейства и сколько раз корректировал специалист',
+            className="header-description_black"),
+    dcc.Dropdown(FamilyHistoryTable['Creater'].unique(), FamilyHistoryTable['Creater'].unique()[0],
+                 id='dropdown-selection2'), dcc.Graph(id='graph-content2'),
+
+    html.H3(children='График активности Bim-специалиста по работе с семействами', style={'textAlign': 'center'}),
+    html.H3(children='На данном графике можно посмотреть сколько изменений внес конкретный специалист в разрезе времени',
+            className="header-description_black"),
+    dcc.Dropdown(TimeLineBIMStat['Creater'].unique(), TimeLineBIMStat['Creater'].unique()[0],
+                 id='dropdown-selection3'), dcc.Graph(id='graph-content3'),
 ])
 
 
@@ -156,6 +173,23 @@ app.layout = html.Div([
 def update_graph(value):
     dd = TimeLineStat[TimeLineStat['Имя команды'] == value]
     return px.line(dd, x='Дата', y='Число использований')
+
+
+@callback(Output('graph-content2', 'figure'), Input('dropdown-selection2', 'value'))
+def update_graph2(value):
+    dd = FamilyHistoryTable[FamilyHistoryTable['Creater'] == value]
+    figure = {
+        'data': [
+            {'x': dd['Name'], 'type': 'histogram'}
+        ],
+    }
+    return figure
+
+@callback(Output('graph-content3', 'figure'), Input('dropdown-selection3', 'value'))
+def update_graph3(value):
+    dd = TimeLineBIMStat[TimeLineBIMStat['Creater'] == value]
+
+    return px.line(dd, x='Дата', y='Число внесенных изменений')
 
 
 if __name__ == '__main__':
