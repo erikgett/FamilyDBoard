@@ -1,11 +1,9 @@
 import dash
 import dash_bootstrap_components as dbc
+import plotly.express as px
+from dash import dash_table
 from dash import dcc, callback, Output, Input
 from dash import html
-import pandas as pd
-from dash import dash_table
-from datetime import timedelta
-import plotly.express as px
 
 from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table, table_for_bim_time_line_graf
 
