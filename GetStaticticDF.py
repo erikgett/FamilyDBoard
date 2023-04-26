@@ -47,6 +47,11 @@ def table_for_bim_time_line_graf(df):
     df_grouped = df_grouped.rename({'count': 'Число внесенных изменений'}, axis=1)
     return df_grouped
 
+def family_news_table(df):
+    df = df.rename({'Name': 'Имя семейства', 'Version': 'Версия семейства', 'Comment': 'Комментарий к версии',
+                    'Creater': 'Разработчик обновления/семейства', 'Types': 'Типы семейств'}, axis=1)
+
+    return df
 
 if __name__ == '__main__':
     FullTable = statistic_table()
