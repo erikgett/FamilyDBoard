@@ -1,11 +1,7 @@
 import sqlite3
 
-import numpy as np
 import pandas as pd
-import pprint
 
-from pandas import Series
-from datetime import timedelta
 
 def statistic_table():
     con = sqlite3.connect(r"\\projects\StranaDev_Family\999 BIM\FamilyManager\Статистика\FM_statistics.db")
@@ -14,7 +10,8 @@ def statistic_table():
     df['Дата'] = pd.to_datetime(df['Дата'], unit='s').dt.strftime('%d %b %Y')
     df['Имя команды'] = df['Имя команды'].replace("ItemSelect", "Разместить эл-т") \
         .replace("UpdateFamilies", "Обновить все сем-ва").replace("DownloadMaterials", "Загрузить материалы") \
-        .replace("LoadTypesInPJ", "Выбрать типы и загрузить").replace("SelectAllTypesInPJ", "Выделить все типы сем-ва") \
+        .replace("LoadTypesInPJ", "Выбрать типы и загрузить").replace("SelectAllTypesInPJ",
+                                                                      "Выделить все типы сем-ва")\
         .replace("SelectAllTypesInPJinActiveView", "Выделить все типы сем-ва на виде") \
         .replace("SelectTypeInPJ", "Выделить тип в проекте").replace("SelectTypeInPJinActiveView",
                                                                      "Выделить тип на виде") \
@@ -38,19 +35,19 @@ def family_history_table():
     return df
 
 
-def table_for_time_line_graf(df): # требуется сосчитать сумму по столбцам такая то команда такая то дата число использований
-    print([col for col in df])
+def table_for_time_line_graf(
+        df):  # требуется сосчитать сумму по столбцам такая то команда такая то дата число использований
     df_grouped = df.groupby(by="Дата")["Имя команды"].value_counts().reset_index(name='count')
-
     df_grouped = df_grouped.rename({'count': 'Число использований'}, axis=1)
     return df_grouped
+
 
 def table_for_bim_time_line_graf(df):
     df_grouped = df.groupby(by="Дата")["Creater"].value_counts().reset_index(name='count')
     df_grouped = df_grouped.rename({'count': 'Число внесенных изменений'}, axis=1)
     return df_grouped
 
+
 if __name__ == '__main__':
     FullTable = statistic_table()
     TimeLineStat = table_for_time_line_graf(FullTable)
-
