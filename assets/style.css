@@ -21,6 +21,10 @@ body {
     margin: 0 auto;
 }
 
+.pad {
+    padding: 16px 0 0 0;
+}
+
 .header-title_black {
     padding: 15px;
     color: #000000;

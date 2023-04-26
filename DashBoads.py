@@ -9,14 +9,14 @@ import plotly.express as px
 
 from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table, table_for_bim_time_line_graf
 
-app = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
+statisticsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI], requests_pathname_prefix="/statistics/")
 FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
 FamilyHistoryTable = family_history_table()
 TimeLineBIMStat = table_for_bim_time_line_graf(FamilyHistoryTable)
 
 
-app.layout = html.Div([
+statisticsPage.layout = html.Div([
     html.Div(
         children=[
             html.P(children="🏢", className="header-emoji"),
@@ -80,11 +80,15 @@ app.layout = html.Div([
 
     html.H3(children='⠀', style={'textAlign': 'center'}),
     html.H3(children='Динамика использования команд', style={'textAlign': 'center'}),
+    html.H3(children='В таблице можно посмотреть в какой день и какими командами как часто пользовались',
+            className="header-description_black"),
     html.H3(children='⠀', style={'textAlign': 'center'}),
     dash_table.DataTable(TimeLineStat.to_dict('records'), [{"name": i, "id": i} for i in TimeLineStat.columns]),
 
     html.H3(children='⠀', style={'textAlign': 'center'}),
     html.H3(children='График использования на временной линии', style={'textAlign': 'center'}),
+    html.H3(children='На данном графике можно посмотреть на активность использования функций плагина в разрезе времени',
+            className="header-description_black"),
     dcc.Graph(
         id='UseAllComandInTimeLine',
         figure={
@@ -136,7 +140,7 @@ app.layout = html.Div([
     html.H3(children='График использования команд на временной линии', style={'textAlign': 'center'}),
     html.H3(children='⠀', style={'textAlign': 'center'}),
     dcc.Dropdown(TimeLineStat['Имя команды'].unique(), TimeLineStat['Имя команды'].unique()[0],
-                 id='dropdown-selection'), dcc.Graph(id='graph-content'),
+                 id='dropdown-selection', style={'padding': '2px 20px 2px 20px'}), dcc.Graph(id='graph-content'),
 
     #   ВТОРАЯ ЧАСТЬ РАЗДЕЛА
     html.H1(children="Часть вторая - анализ активности работы BIM-специалистов",
@@ -158,14 +162,15 @@ app.layout = html.Div([
     html.H3(children='Число внесенных изменений от Bim-специалиста для конкретного семейства', style={'textAlign': 'center'}),
     html.H3(children='На данном графике можно посмотреть какие конкретного семейства и сколько раз корректировал специалист',
             className="header-description_black"),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
     dcc.Dropdown(FamilyHistoryTable['Creater'].unique(), FamilyHistoryTable['Creater'].unique()[0],
-                 id='dropdown-selection2'), dcc.Graph(id='graph-content2'),
+                 id='dropdown-selection2', style={'padding': '2px 20px 2px 20px'}), dcc.Graph(id='graph-content2'),
 
     html.H3(children='График активности Bim-специалиста по работе с семействами', style={'textAlign': 'center'}),
     html.H3(children='На данном графике можно посмотреть сколько изменений внес конкретный специалист в разрезе времени',
             className="header-description_black"),
     dcc.Dropdown(TimeLineBIMStat['Creater'].unique(), TimeLineBIMStat['Creater'].unique()[0],
-                 id='dropdown-selection3'), dcc.Graph(id='graph-content3'),
+                 id='dropdown-selection3', style={'padding': '2px 20px 2px 20px'}), dcc.Graph(id='graph-content3'),
 ])
 
 
@@ -195,6 +200,6 @@ def update_graph3(value):
 if __name__ == '__main__':
     arelocal = True
     if arelocal:
-        app.run_server(debug=True)
+        statisticsPage.run_server(debug=True)
     else:
-        app.run_server(debug=False, host='0.0.0.0')
+        statisticsPage.run_server(debug=False, host='0.0.0.0')

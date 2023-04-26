@@ -25,7 +25,7 @@ def statistic_table():
 
 def family_table():
     con = sqlite3.connect(r"\\projects\StranaDev_Family\999 BIM\FamilyManager\family_db.db")
-    df = pd.read_sql_query("SELECT * FROM Familiрes", con)
+    df = pd.read_sql_query("SELECT * FROM Families", con)
     return df
 
 
@@ -34,6 +34,7 @@ def family_history_table():
     df = pd.read_sql_query("SELECT * FROM family_history", con)
     df = df.rename({'Data': 'Дата'}, axis=1)
     df['Дата'] = pd.to_datetime(df['Дата'], unit='s').dt.strftime('%d %b %Y')
+    df["Creater"] = df["Creater"].str.lower()
     return df
 
 
