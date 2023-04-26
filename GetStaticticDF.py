@@ -51,7 +51,7 @@ def family_news_table(df):
     df = df.rename({'Name': 'Имя семейства', 'Version': 'Версия семейства', 'Comment': 'Комментарий к версии',
                     'Creater': 'Разработчик обновления/семейства', 'Types': 'Типы семейств'}, axis=1)
 
-    return df
+    return df[["Имя семейства", "Комментарий к версии", "Версия семейства", "Разработчик обновления/семейства"]]
 
 if __name__ == '__main__':
     FullTable = statistic_table()

@@ -49,6 +49,14 @@ body {
     max-width: 384px;
 }
 
+.header-description_black_wht_alg {
+    color: #000000;
+    margin: 4px auto;
+    font-size: 14px;
+    text-align: left;
+    max-width: 384px;
+}
+
 .wrapper {
     margin-right: auto;
     margin-left: auto;
