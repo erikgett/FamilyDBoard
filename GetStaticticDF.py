@@ -39,14 +39,18 @@ def family_history_table():
 
 
 def table_for_time_line_graf(df): # требуется сосчитать сумму по столбцам такая то команда такая то дата число использований
-    df_grouped = df.groupby(by="Дата")["Имя команды"].value_counts().reset_index()
+    print([col for col in df])
+    df_grouped = df.groupby(by="Дата")["Имя команды"].value_counts().reset_index(name='count')
+
     df_grouped = df_grouped.rename({'count': 'Число использований'}, axis=1)
     return df_grouped
 
 def table_for_bim_time_line_graf(df):
-    df_grouped = df.groupby(by="Дата")["Creater"].value_counts().reset_index()
+    df_grouped = df.groupby(by="Дата")["Creater"].value_counts().reset_index(name='count')
     df_grouped = df_grouped.rename({'count': 'Число внесенных изменений'}, axis=1)
     return df_grouped
 
 if __name__ == '__main__':
-    statistic_table()
+    FullTable = statistic_table()
+    TimeLineStat = table_for_time_line_graf(FullTable)
+

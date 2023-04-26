@@ -9,12 +9,11 @@ import plotly.express as px
 
 from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table, table_for_bim_time_line_graf
 
-statisticsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI], requests_pathname_prefix="/statistics/")
+statisticsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
 FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
 FamilyHistoryTable = family_history_table()
 TimeLineBIMStat = table_for_bim_time_line_graf(FamilyHistoryTable)
-
 
 statisticsPage.layout = html.Div([
     html.Div(
@@ -159,15 +158,18 @@ statisticsPage.layout = html.Div([
         }
     ),
 
-    html.H3(children='Число внесенных изменений от Bim-специалиста для конкретного семейства', style={'textAlign': 'center'}),
-    html.H3(children='На данном графике можно посмотреть какие конкретного семейства и сколько раз корректировал специалист',
+    html.H3(children='Число внесенных изменений от Bim-специалиста для конкретного семейства',
+            style={'textAlign': 'center'}),
+    html.H3(children='На данном графике можно посмотреть какие конкретного '
+                     'семейства и сколько раз корректировал специалист',
             className="header-description_black"),
     html.H3(children='⠀', style={'textAlign': 'center'}),
     dcc.Dropdown(FamilyHistoryTable['Creater'].unique(), FamilyHistoryTable['Creater'].unique()[0],
                  id='dropdown-selection2', style={'padding': '2px 20px 2px 20px'}), dcc.Graph(id='graph-content2'),
 
     html.H3(children='График активности Bim-специалиста по работе с семействами', style={'textAlign': 'center'}),
-    html.H3(children='На данном графике можно посмотреть сколько изменений внес конкретный специалист в разрезе времени',
+    html.H3(children='На данном графике можно посмотреть сколько'
+                     ' изменений внес конкретный специалист в разрезе времени',
             className="header-description_black"),
     dcc.Dropdown(TimeLineBIMStat['Creater'].unique(), TimeLineBIMStat['Creater'].unique()[0],
                  id='dropdown-selection3', style={'padding': '2px 20px 2px 20px'}), dcc.Graph(id='graph-content3'),
@@ -189,6 +191,7 @@ def update_graph2(value):
         ],
     }
     return figure
+
 
 @callback(Output('graph-content3', 'figure'), Input('dropdown-selection3', 'value'))
 def update_graph3(value):

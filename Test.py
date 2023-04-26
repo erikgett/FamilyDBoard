@@ -13,14 +13,12 @@ def home():
     return "Hello, Flask!"
 
 
-app1 = statisticsPage
-
 app2 = dash.Dash(requests_pathname_prefix="/app2/")
 app2.layout = html.Div("Hello, Dash app 2!")
 
 application = DispatcherMiddleware(
     server,
-    {"/app1": app1.server, "/app2": app2.server},
+    {"/statisticsPage": statisticsPage.server, "/app2": app2.server},
 )
 
 if __name__ == "__main__":
