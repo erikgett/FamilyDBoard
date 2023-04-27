@@ -5,10 +5,12 @@ from dash import dash_table
 from dash import dcc, callback, Output, Input
 from dash import html
 from datetime import datetime as dt
+from datetime import timedelta
 import pandas as pd
 from GetStaticticDF import family_history_table, family_news_table
 
 FamilyHistoryTable = family_news_table(family_history_table())
+FamilyHistoryTable.sort_values(by='Дата', ascending=False, inplace=True)
 
 FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
 
@@ -37,8 +39,10 @@ FamiliesNewsPage.layout = html.Div([
                     with_portal=False, first_day_of_week=1,
                     reopen_calendar_on_clear=True, is_RTL=False,
                     clearable=True, number_of_months_shown=1, min_date_allowed=dt(2022, 1, 1),
-                    max_date_allowed=dt(2025, 1, 1), initial_visible_month=dt(2023, 4, 25),
-                    start_date=dt(2023, 4, 23).date(), end_date=dt(2023, 4, 26).date(),
+                    max_date_allowed=dt(2030, 1, 1), initial_visible_month=dt(2023, 4, 25),
+                    start_date=dt((dt.now() - timedelta(days=10)).year, (dt.now() - timedelta(days=10)).month,
+                                  (dt.now() - timedelta(days=10)).day).date(),
+                    end_date=dt(dt.now().year, dt.now().month, dt.now().day).date(),
                     display_format='MMM Do, YY', month_format='MMMM, YYYY',
                     minimum_nights=1, persistence=True, persisted_props=['start_date'],
                     persistence_type='session', updatemode='singledate'
@@ -80,15 +84,15 @@ def string_to_pd_date(date):
         dash.dependencies.Input("my-date-picker-range", "start_date"),
         dash.dependencies.Input("my-date-picker-range", "end_date"),
         dash.dependencies.Input("update_new_load", "value"),
-    ],)
+    ], )
 def update_data(start_date, end_date, value):
     # отсортировали по дате
     out_df = FamilyHistoryTable[pd.to_datetime(FamilyHistoryTable['Дата']) >= string_to_pd_date(start_date)]
     out_dff = out_df[pd.to_datetime(out_df['Дата']) <= string_to_pd_date(end_date)]
     # отсортировать по загружено новое обновление все
-    if value =='Новые семейства':
+    if value == 'Новые семейства':
         out_dff = out_dff[out_dff['Версия семейства'] == '1.0.0']
-    elif value =='Свежие обновления':
+    elif value == 'Свежие обновления':
         out_dff = out_dff[out_dff['Версия семейства'] != '1.0.0']
 
     date = out_dff.to_dict("records")
