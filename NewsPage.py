@@ -14,6 +14,7 @@ FamilyHistoryTable.sort_values(by='Дата', ascending=False, inplace=True)
 
 FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
 
+
 def list_with_unique_coloms(FamilyHistoryTable):
     not_unique = list(FamilyHistoryTable['Раздел'].unique())
     not_unique.append('Все разделы')
@@ -24,6 +25,7 @@ def list_with_unique_coloms(FamilyHistoryTable):
             out_list.append(j)
 
     return list(set(out_list))
+
 
 FamiliesNewsPage.layout = html.Div([
     html.Div(
@@ -59,19 +61,13 @@ FamiliesNewsPage.layout = html.Div([
                     persistence_type='session', updatemode='singledate'
                 )
             ]),
+            dbc.Col([html.H3(children=' ')]),
             dbc.Col([
                 html.H3(children='Отметьте необходимый для вас раздел',
                         style={'font-size': '14px', 'padding': '16px 20px 0 0',
                                'color': '#000000', 'font-weight': 'bold'}),
                 dcc.Dropdown(list_with_unique_coloms(FamilyHistoryTable),
                              'Все разделы', id='set_chapter')
-            ]),
-            dbc.Col([
-                html.H3(children='Что отобразить (новые семейства/обновления/всё)',
-                        style={'font-size': '14px', 'padding': '16px 20px 0 0',
-                               'color': '#000000', 'font-weight': 'bold'}),
-                dcc.Dropdown(['Новые семейства', 'Свежие обновления', 'Все семейства'], 'Все семейства',
-                             id='update_new_load')
             ]),
         ]),
     ]),
@@ -95,20 +91,12 @@ def string_to_pd_date(date):
     [
         dash.dependencies.Input("my-date-picker-range", "start_date"),
         dash.dependencies.Input("my-date-picker-range", "end_date"),
-        dash.dependencies.Input("update_new_load", "value"),
         dash.dependencies.Input("set_chapter", "value"),
     ], )
-def update_data(start_date, end_date, value, chapter):
-    # отсортировали по дате
+def update_data(start_date, end_date, chapter):
     out_df = FamilyHistoryTable[pd.to_datetime(FamilyHistoryTable['Дата']) >= string_to_pd_date(start_date)]
     out_dff = out_df[pd.to_datetime(out_df['Дата']) <= string_to_pd_date(end_date)]
-    # отсортировать по загружено новое обновление все
-    if value == 'Новые семейства':
-        out_dff = out_dff[out_dff['Версия семейства'] == '1.0.0']
-    elif value == 'Свежие обновления':
-        out_dff = out_dff[out_dff['Версия семейства'] != '1.0.0']
-
-    if chapter !='Все разделы':
+    if chapter != 'Все разделы':
         out_dff = out_dff[out_dff['Раздел'] == chapter]
 
     date = out_dff.to_dict("records")
@@ -116,5 +104,4 @@ def update_data(start_date, end_date, value, chapter):
 
 
 if __name__ == '__main__':
-
     FamiliesNewsPage.run_server(debug=False, host='0.0.0.0')
