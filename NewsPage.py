@@ -28,7 +28,7 @@ FamiliesNewsPage.layout = html.Div([
     dbc.Container([
         dbc.Row([
             dbc.Col([
-                html.H3(children='Промежуток времени для истории',
+                html.H3(children='Промежуток времени истории обновлений',
                         style={'font-size': '14px', 'padding': '16px 20px 0 0',
                                'color': '#000000', 'font-weight': 'bold'}),
                 dcc.DatePickerRange(
@@ -38,7 +38,7 @@ FamiliesNewsPage.layout = html.Div([
                     reopen_calendar_on_clear=True, is_RTL=False,
                     clearable=True, number_of_months_shown=1, min_date_allowed=dt(2022, 1, 1),
                     max_date_allowed=dt(2025, 1, 1), initial_visible_month=dt(2023, 4, 25),
-                    start_date=dt(2023, 4, 23).date(), end_date=dt(2020, 4, 26).date(),
+                    start_date=dt(2023, 4, 23).date(), end_date=dt(2023, 4, 26).date(),
                     display_format='MMM Do, YY', month_format='MMMM, YYYY',
                     minimum_nights=1, persistence=True, persisted_props=['start_date'],
                     persistence_type='session', updatemode='singledate'
@@ -54,7 +54,8 @@ FamiliesNewsPage.layout = html.Div([
                 html.H3(children='Что отобразить (новые семейства/обновления/всё)',
                         style={'font-size': '14px', 'padding': '16px 20px 0 0',
                                'color': '#000000', 'font-weight': 'bold'}),
-                dcc.Dropdown(['Новые семейства', 'Свежие обновления', 'Все семейства'], 'Все семейства')
+                dcc.Dropdown(['Новые семейства', 'Свежие обновления', 'Все семейства'], 'Все семейства',
+                             id='update_new_load')
             ]),
         ]),
     ]),
@@ -69,19 +70,28 @@ FamiliesNewsPage.layout = html.Div([
 ])
 
 
+def string_to_pd_date(date):
+    return pd.to_datetime(pd.Series(date))[0]
+
+
 @FamiliesNewsPage.callback(
     dash.dependencies.Output("datatable-interactivity", "data"),
     [
         dash.dependencies.Input("my-date-picker-range", "start_date"),
         dash.dependencies.Input("my-date-picker-range", "end_date"),
-    ],
-)
-def update_data(start_date, end_date):
-    date = FamilyHistoryTable.to_dict("records")
-    if start_date and end_date:
-        mask = (FamilyHistoryTable["Дата"] >= start_date) \
-               & (FamilyHistoryTable["Дата"] <= end_date)
-        data = FamilyHistoryTable.loc[mask].to_dict("records")
+        dash.dependencies.Input("update_new_load", "value"),
+    ],)
+def update_data(start_date, end_date, value):
+    # отсортировали по дате
+    out_df = FamilyHistoryTable[pd.to_datetime(FamilyHistoryTable['Дата']) >= string_to_pd_date(start_date)]
+    out_dff = out_df[pd.to_datetime(out_df['Дата']) <= string_to_pd_date(end_date)]
+    # отсортировать по загружено новое обновление все
+    if value =='Новые семейства':
+        out_dff = out_dff[out_dff['Версия семейства'] == '1.0.0']
+    elif value =='Свежие обновления':
+        out_dff = out_dff[out_dff['Версия семейства'] != '1.0.0']
+
+    date = out_dff.to_dict("records")
     return date
 
 
