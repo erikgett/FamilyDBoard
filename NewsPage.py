@@ -86,7 +86,4 @@ def update_data(start_date, end_date):
 
 
 if __name__ == '__main__':
-    if True:
-        FamiliesNewsPage.run_server(debug=True)
-    else:
-        FamiliesNewsPage.run_server(debug=False, host='0.0.0.0')
+    FamiliesNewsPage.run_server(debug=True)
