@@ -11,7 +11,7 @@ def statistic_table():
     df['Имя команды'] = df['Имя команды'].replace("ItemSelect", "Разместить эл-т") \
         .replace("UpdateFamilies", "Обновить все сем-ва").replace("DownloadMaterials", "Загрузить материалы") \
         .replace("LoadTypesInPJ", "Выбрать типы и загрузить").replace("SelectAllTypesInPJ",
-                                                                      "Выделить все типы сем-ва")\
+                                                                      "Выделить все типы сем-ва") \
         .replace("SelectAllTypesInPJinActiveView", "Выделить все типы сем-ва на виде") \
         .replace("SelectTypeInPJ", "Выделить тип в проекте").replace("SelectTypeInPJinActiveView",
                                                                      "Выделить тип на виде") \
@@ -47,12 +47,20 @@ def table_for_bim_time_line_graf(df):
     df_grouped = df_grouped.rename({'count': 'Число внесенных изменений'}, axis=1)
     return df_grouped
 
-def family_news_table(df):
+
+def family_news_table(df, family_table):
     df = df.rename({'Name': 'Имя семейства', 'Version': 'Версия семейства', 'Comment': 'Комментарий к версии',
                     'Creater': 'Разработчик обновления/семейства', 'Types': 'Типы семейств'}, axis=1)
+    # Добавить в DateFraim колонку с разделом
+    def chapter(row, family_table):
+        ttt = family_table[family_table['Name'] == row[0]].reset_index()
+        return ttt.KeyWords[0]
 
-    return df[["Имя семейства", "Комментарий к версии",
-               "Версия семейства", "Разработчик обновления/семейства", "Дата"]]
+    df['Раздел'] = df.apply(lambda row: chapter(row, family_table), axis=1)
+
+    return df[["Имя семейства", "Комментарий к версии", "Версия семейства",
+               "Разработчик обновления/семейства", 'Раздел', "Дата"]]
+
 
 if __name__ == '__main__':
     FullTable = statistic_table()
