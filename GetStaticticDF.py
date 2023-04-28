@@ -49,8 +49,8 @@ def table_for_bim_time_line_graf(df):
 
 
 def family_news_table(df, family_table):
-    df = df.rename({'Name': 'Имя семейства', 'Version': 'Версия семейства', 'Comment': 'Комментарий к версии',
-                    'Creater': 'Разработчик обновления/семейства', 'Types': 'Типы семейств'}, axis=1)
+    df = df.rename({'Name': 'Имя семейства', 'Version': 'Версия', 'Comment': 'Комментарий к версии',
+                    'Creater': 'Разработчик', 'Types': 'Типы семейств'}, axis=1)
     # Добавить в DateFraim колонку с разделом
     def chapter(row, family_table):
         ttt = family_table[family_table['Name'] == row[0]].reset_index()
@@ -58,8 +58,8 @@ def family_news_table(df, family_table):
 
     df['Раздел'] = df.apply(lambda row: chapter(row, family_table), axis=1)
 
-    return df[["Имя семейства", "Комментарий к версии", "Версия семейства",
-               "Разработчик обновления/семейства", 'Раздел', "Дата"]]
+    return df[["Имя семейства", "Комментарий к версии", "Версия",
+               "Разработчик", 'Раздел', "Дата"]]
 
 
 if __name__ == '__main__':

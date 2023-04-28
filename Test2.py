@@ -1,91 +1,99 @@
+from dash import Dash, Input, Output, State, dcc, html, no_update, dash_table
+import dash_bootstrap_components as dbc
 import pandas as pd
-import dash
-import dash_table
-from dash.dependencies import Input, Output
-from datetime import datetime as dt
-import dash_core_components as dcc
-import dash_html_components as html
 
-df = pd.read_csv("Test_Time_Series.csv")
-df["Date"] = pd.to_datetime(df.Date, errors="coerce")
-df.index = df["Date"]
+external_stylesheets = [dbc.themes.BOOTSTRAP]
+app = Dash(__name__, external_stylesheets=external_stylesheets)
 
-app = dash.Dash()
+df = pd.read_csv('https://git.io/Juf1t')
+df['id'] = df.State
 
-app.layout = html.Div(
-    [
-        dcc.DatePickerRange(
-            id="my-date-picker-range",
-            min_date_allowed=dt(2019, 1, 1),
-            max_date_allowed=dt(2019, 1, 4),
-            initial_visible_month=dt(2019, 1, 1),
-            end_date=dt(2019, 1, 4),
-        ),
-        dash_table.DataTable(
-            id="datatable-interactivity",
-            columns=[
-                {
-                    "name": i,
-                    "id": i,
-                    "deletable": True,
-                    "selectable": True,
-                    "hideable": True,
-                }
-                if i == "iso_alpha3" or i == "year" or i == "id"
-                else {"name": i, "id": i, "deletable": True, "selectable": True}
-                for i in df.columns
-            ],
-            data=df.to_dict("records"),  # the contents of the table
-            editable=True,  # allow editing of data inside all cells
-            filter_action="native",  # allow filtering of data by user ('native') or not ('none')
-            sort_action="native",  # enables data to be sorted per-column by user or not ('none')
-            sort_mode="single",  # sort across 'multi' or 'single' columns
-            column_selectable="multi",  # allow users to select 'multi' or 'single' columns
-            row_selectable="multi",  # allow users to select 'multi' or 'single' rows
-            row_deletable=True,  # choose if user can delete a row (True) or not (False)
-            selected_columns=[],  # ids of columns that user selects
-            selected_rows=[],  # indices of rows that user selects
-            page_action="native",  # all data is passed to the table up-front or not ('none')
-            page_current=0,  # page number that user is on
-            page_size=6,  # number of rows visible per page
-            style_cell={  # ensure adequate header width when text is shorter than cell's text
-                "minWidth": 95,
-                "maxWidth": 95,
-                "width": 95,
+app.layout = dbc.Container([
+    dbc.Label('Click a cell in the table:'),
+    dash_table.DataTable(
+        df.to_dict('records'),
+        columns=[{"name": i, "id": i} for i in df.columns[:-2]],
+        row_selectable='single',
+        cell_selectable=True,
+        style_data_conditional=[
+            {
+                "if": {
+                    "state": "active"  # 'active' | 'selected'
+                },
+                "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                "border": "1px solid rgb(0, 116, 217)",
             },
-            style_cell_conditional=[  # align text columns to left. By default they are aligned to right
-                {"if": {"column_id": c}, "textAlign": "left"}
-                for c in ["country", "iso_alpha3"]
-            ],
-            style_data={  # overflow cells' content into multiple lines
-                "whiteSpace": "normal",
-                "height": "auto",
-            },
-        ),
-    ]
-)
+            {
+                "if": {
+                    "state": "selected"  # 'active' | 'selected'
+                },
+                "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                "border": "1px solid rgb(0, 116, 217)",
+            }
 
-
-def date_string_to_date(date_string):
-    return pd.to_datetime(date_string, infer_datetime_format=True)
+        ],
+        id='tbl'),
+    dbc.Alert(id='tbl_out'),
+    dbc.Alert(id='tbl_out2'),
+])
 
 
 @app.callback(
-    dash.dependencies.Output("datatable-interactivity", "data"),
-    [
-        dash.dependencies.Input("my-date-picker-range", "start_date"),
-        dash.dependencies.Input("my-date-picker-range", "end_date"),
-    ],
-)
-def update_data(start_date, end_date):
-    data = df.to_dict("records")
-    if start_date and end_date:
-        mask = (date_string_to_date(df["Date"]) >= date_string_to_date(start_date)) & (
-            date_string_to_date(df["Date"]) <= date_string_to_date(end_date)
+    (
+            Output('tbl_out', 'children'),
+            Output('tbl', 'selected_rows'),
+    ), Input('tbl', 'active_cell'),
+    prevent_initial_call=True)
+def update_graphs(active_cell):
+    return (
+        str(active_cell),
+        [active_cell['row']],
+    ) if active_cell else (str(active_cell), no_update)
+
+
+@app.callback(
+    (
+            Output('tbl_out2', 'children'),
+            Output('tbl', 'style_data_conditional'),
+            Output('tbl', 'active_cell'),
+            Output('tbl', 'selected_cells')
+    ),
+    Input('tbl', 'derived_viewport_selected_row_ids'),
+    State('tbl', 'derived_viewport_selected_rows'),
+    State('tbl', 'active_cell'),
+    State('tbl', 'selected_cells'),
+    prevent_initial_call=True)
+def update_graphs2(selected_row_ids, selected_rows, active_cell, selected_cells):
+    if selected_row_ids:
+        if active_cell:
+            active_cell['row'] = selected_rows[0]
+        else:
+            active_cell = no_update
+        return (
+            str(f'{selected_row_ids} {selected_rows} {active_cell} {selected_cells}'),
+            [
+                {
+                    "if": {
+                        "filter_query": "{{id}} = '{}'".format(i)
+                    },
+                    "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                    "border": "1px solid rgb(0, 116, 217)",
+                } for i in selected_row_ids
+            ] + [
+                {
+                    "if": {
+                        "state": "active"  # 'active' | 'selected'
+                    },
+                    "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                    "border": "1px solid rgb(0, 116, 217)",
+                }
+            ],
+            active_cell,
+            []
         )
-        data = df.loc[mask].to_dict("records")
-    return data
+    else:
+        return "Click the table", [], no_update, []
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run_server(debug=True)

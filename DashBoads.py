@@ -4,10 +4,14 @@ import plotly.express as px
 from dash import dash_table
 from dash import dcc, callback, Output, Input
 from dash import html
+from flask_ngrok import run_with_ngrok
+
+from jupyter_dash import JupyterDash
 
 from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table, table_for_bim_time_line_graf
 
-statisticsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
+statisticsPage = JupyterDash(__name__, external_stylesheets=[dbc.themes.YETI])
+
 FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
 FamilyHistoryTable = family_history_table()
@@ -199,8 +203,15 @@ def update_graph3(value):
 
 
 if __name__ == '__main__':
-    arelocal = True
-    if arelocal:
-        statisticsPage.run_server(debug=True)
-    else:
-        statisticsPage.run_server(debug=False, host='0.0.0.0')
+    # arelocal = True
+    # if arelocal:
+    #     statisticsPage.run_server(debug=False, mode='external')
+    # else:
+    #     statisticsPage.run_server(debug=False, host='0.0.0.0')
+
+    statisticsPage.run_server(mode='external')
+    from pyngrok import ngrok
+
+    public_url = ngrok.connect(port='8050')
+    public_url
+    ssh_url = ngrok.connect(22, 'tcp')

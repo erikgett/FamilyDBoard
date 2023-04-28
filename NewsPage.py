@@ -3,7 +3,7 @@ import dash_bootstrap_components as dbc
 import plotly.express as px
 from dash import dash_table
 from dash import dcc, callback, Output, Input
-from dash import html
+from dash import html, no_update, State
 from datetime import datetime as dt
 from datetime import timedelta
 import pandas as pd
@@ -79,7 +79,22 @@ FamiliesNewsPage.layout = html.Div([
     dash_table.DataTable(data=FamilyHistoryTable.to_dict('records'),
                          columns=[{"name": i, "id": i} for i in FamilyHistoryTable.columns],
                          page_size=20, id='datatable-interactivity'),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
+    dbc.Alert(id='tbl_out', style={'margin': '0px 20px 0px 20px'}, color="light"),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
 ])
+
+
+@FamiliesNewsPage.callback((Output('tbl_out', 'children'), Output('datatable-interactivity', 'selected_rows'),),
+                           Input('datatable-interactivity', 'active_cell'),
+                           Input('datatable-interactivity', 'data'),
+                           Input('datatable-interactivity', 'derived_viewport_selected_row_ids'),
+                           prevent_initial_call=True)
+def update_graphs(active_cell, data, selected_row_ids):
+    if active_cell:
+        return str(active_cell)+str([active_cell['row']])+str([active_cell['row_id']]), [active_cell['row']]
+    else:
+        return "Нажмите на семейство, чтобы увидеть подробную историю о семействе", []
 
 
 def string_to_pd_date(date):
@@ -91,8 +106,7 @@ def string_to_pd_date(date):
     [
         dash.dependencies.Input("my-date-picker-range", "start_date"),
         dash.dependencies.Input("my-date-picker-range", "end_date"),
-        dash.dependencies.Input("set_chapter", "value"),
-    ], )
+        dash.dependencies.Input("set_chapter", "value")])
 def update_data(start_date, end_date, chapter):
     out_df = FamilyHistoryTable[pd.to_datetime(FamilyHistoryTable['Дата']) >= string_to_pd_date(start_date)]
     out_dff = out_df[pd.to_datetime(out_df['Дата']) <= string_to_pd_date(end_date)]
