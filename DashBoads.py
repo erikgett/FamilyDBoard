@@ -10,7 +10,8 @@ from jupyter_dash import JupyterDash
 
 from GetStaticticDF import statistic_table, table_for_time_line_graf, family_history_table, table_for_bim_time_line_graf
 
-statisticsPage = JupyterDash(__name__, external_stylesheets=[dbc.themes.YETI])
+statisticsPage = JupyterDash(__name__, external_stylesheets=[dbc.themes.YETI],
+                             requests_pathname_prefix='/statisticsPage/')
 
 FullTable = statistic_table()
 TimeLineStat = table_for_time_line_graf(FullTable)
