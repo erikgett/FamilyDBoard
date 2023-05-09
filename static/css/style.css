@@ -30,14 +30,19 @@
 
 /* Style the active/current link*/
 .header a.active {
-  background-color: dodgerblue;
+  background: linear-gradient(60deg, rgba(84,58,183,1) 0%, rgba(154,0,138,1) 100%);
   color: white;
 }
 
 /* Float the link section to the right */
 .header-right {
   float: right;
+}
 
+.s-logo__icon{
+
+    height: 20px;
+    width: 130px;
 }
 
 /* Add media queries for responsiveness - when the screen is 500px wide or less, stack the links on top of each other */
@@ -51,3 +56,5 @@
     float: none;
   }
 }
+
+

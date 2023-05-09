@@ -10,7 +10,7 @@ def index():
 
 @flask_app.route('/test')
 def mainFraim():
-    return render_template('Logo.html')
+    return render_template('mainFraim.html')
 
 @flask_app.route('/dash')
 def dash_page():
