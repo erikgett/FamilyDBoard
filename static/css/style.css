@@ -1,7 +1,12 @@
 /* Style the header with a grey background and some padding */
 .header {
   overflow: hidden;
-  padding: 20px 10px;
+  padding: 10px 10px;
+}
+
+* {
+   margin: 0px;
+   padding: 0px;
 }
 
 /* Style the header links */
