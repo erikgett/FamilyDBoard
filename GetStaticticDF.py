@@ -4,7 +4,7 @@ import pandas as pd
 
 
 def statistic_table():
-    con = sqlite3.connect(r"\\projects\StranaDev_Family\999 BIM\FamilyManager\Статистика\FM_statistics.db")
+    con = sqlite3.connect(r"C:\Users\gette.e\Desktop\FM_statistics.db")
     df = pd.read_sql_query("SELECT * FROM UserAction", con)
     df = df.rename({'CommandName': 'Имя команды', 'Time': 'Дата'}, axis=1)
     df['Дата'] = pd.to_datetime(df['Дата'], unit='s').dt.strftime('%d %b %Y')

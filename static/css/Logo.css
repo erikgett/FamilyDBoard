@@ -1,0 +1,17 @@
+.s-logo__icon[data-v-c05d836f] {
+    fill: currentColor;
+    display: inherit;
+    height: var(--s-logo-height);
+    width: var(--s-logo-width);
+}
+
+.s-logo--primary-common[data-v-c05d836f] {
+    --s-logo-color-stop-1: #92278f;
+    --s-logo-color-stop-2: #c6168d;
+    --s-logo-color-stop-3: #ed1c24;
+    color: #012345;
+}
+
+.s-logo--large[data-v-c05d836f] {
+    --s-logo-width: 120px;
+}

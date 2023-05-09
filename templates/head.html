@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Strana BIM</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link type="text/css" href="{{ url_for('static', filename='css/style.css')}}" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+      <a href="/" class="logo">Страна BIM</a>
+      <div class="header-right">
+        <a class="active" href="/statisticsPage">Статистика</a>
+        <a href="/FamiliesNewsPage">Аналитика</a>
+        <a href="/FamiliesNewsPage">О инструменте</a>
+      </div>
+    </div>
+{% block content -%}
+
+{% endblock -%}
+</body>
+</html>

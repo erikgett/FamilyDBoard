@@ -6,8 +6,11 @@ from DashBoads import statisticsPage as dash_app
 
 @flask_app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('mainPage.html')
 
+@flask_app.route('/test')
+def mainFraim():
+    return render_template('Logo.html')
 
 @flask_app.route('/dash')
 def dash_page():
