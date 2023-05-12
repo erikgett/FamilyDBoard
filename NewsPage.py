@@ -12,8 +12,8 @@ from GetStaticticDF import family_history_table, family_news_table, family_table
 FamilyHistoryTable = family_news_table(family_history_table(), family_table())
 FamilyHistoryTable.sort_values(by='Дата', ascending=False, inplace=True)
 
-# FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI], requests_pathname_prefix='/FamiliesNewsPage/')
-FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
+FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI], requests_pathname_prefix='/FamiliesNewsPage/')
+
 
 FamilyHistoryTable['id'] = FamilyHistoryTable['Имя семейства']
 
@@ -103,15 +103,15 @@ FamiliesNewsPage.layout = html.Div([
         ],
         id='datatable-interactivity'),
 
-    html.H3(children='⠀', style={'textAlign': 'center'}),
-    dbc.Alert(id='tbl_out', style={'margin': '0px 20px 0px 20px'}, color="light"),
-    html.H3(children='⠀', style={'textAlign': 'center'}),
-    html.H3(children='Таблица для конкретного семейства', style={'textAlign': 'center'}),
+    dbc.Alert(id='tbl_out', style={'margin': '0px 20px 0px 20px', 'display': 'none'}, color="light"),
+    html.H3(children='Таблица для выбранного семейства', style={'textAlign': 'center'}),
     html.H3(children='⠀', style={'textAlign': 'center'}),
     dash_table.DataTable(
         data=FamilyHistoryTable.to_dict('records'),
+        columns=[{"name": i, "id": i} for i in FamilyHistoryTable.columns[:-2]],
         page_size=20,
         id='selectedItem'),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
 ])
 
 
@@ -120,7 +120,7 @@ FamiliesNewsPage.layout = html.Div([
                            prevent_initial_call=True)
 def update_graphs(active_cell):
     if active_cell:
-        return str(active_cell) + str([active_cell['row']]) + str([active_cell['row_id']]), [active_cell['row']]
+        return active_cell['row_id'], [active_cell['row']]
     else:
         return "Нажмите на семейство, чтобы увидеть подробную историю о семействе", []
 
@@ -130,21 +130,6 @@ def string_to_pd_date(date):
 
 
 # Фильтрация таблицы по календарю и разделам
-@FamiliesNewsPage.callback(
-    dash.dependencies.Output("datatable-interactivity", "data"),
-    [
-        dash.dependencies.Input("my-date-picker-range", "start_date"),
-        dash.dependencies.Input("my-date-picker-range", "end_date"),
-        dash.dependencies.Input("set_chapter", "value")])
-def update_data(start_date, end_date, chapter):
-    out_df = FamilyHistoryTable[pd.to_datetime(FamilyHistoryTable['Дата']) >= string_to_pd_date(start_date)]
-    out_dff = out_df[pd.to_datetime(out_df['Дата']) <= string_to_pd_date(end_date)]
-    if chapter != 'Все разделы':
-        out_dff = out_dff[out_dff['Раздел'] == chapter]
-
-    date = out_dff.to_dict("records")
-    return date
-
 
 # Выделение необходимых строк
 @FamiliesNewsPage.callback(
@@ -186,6 +171,23 @@ def update_graphs2(selected_row_ids, selected_rows, active_cell):
         )
     else:
         return [], no_update, []
+@FamiliesNewsPage.callback(
+    dash.dependencies.Output("datatable-interactivity", "data"),
+    [
+        dash.dependencies.Input("my-date-picker-range", "start_date"),
+        dash.dependencies.Input("my-date-picker-range", "end_date"),
+        dash.dependencies.Input("set_chapter", "value")])
+def update_data(start_date, end_date, chapter):
+    out_df = FamilyHistoryTable[pd.to_datetime(FamilyHistoryTable['Дата']) >= string_to_pd_date(start_date)]
+    out_dff = out_df[pd.to_datetime(out_df['Дата']) <= string_to_pd_date(end_date)]
+    if chapter != 'Все разделы':
+        out_dff = out_dff[out_dff['Раздел'] == chapter]
+
+    date = out_dff.to_dict("records")
+    return date
+
+
+
 
 
 # Фильтрация таблицы по выбранному семейству в другой таблице
@@ -194,19 +196,16 @@ def update_graphs2(selected_row_ids, selected_rows, active_cell):
     [
         Input('datatable-interactivity', 'active_cell'),
     ])
-
-def updateFamilyItem( active_cell):
+def updateFamilyItem(active_cell):
     try:
         familyName = active_cell['row_id']
-        if familyName == None:
-            familyName =''
-    except: familyName =''
+    except:
+        familyName = ''
 
     out_df = FamilyHistoryTable[FamilyHistoryTable['Имя семейства'] == familyName]
     date = out_df.to_dict("records")
     return date
 
+
 if __name__ == '__main__':
     FamiliesNewsPage.run_server(debug=False)
-
-

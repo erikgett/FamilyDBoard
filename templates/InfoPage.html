@@ -1,5 +1,21 @@
 {% extends 'head.html'%}
 {% block content %}
 {{ super() }}
-    <p> adfasdf</p>
+    <section class="hero-area">
+	        <div class="container">
+	            <div class="row">
+                    <div class="col-md-6 text-center">
+                        <img src="{{ url_for('static', filename='images/FamilyMainPage.png')}}" align="middle" />
+                    </div>
+	                <div class="col-md-6">
+	                    <div class="block">
+	                        <h1 class="">Менеджер семейств</h1>
+	                        <p>Данный инструмент предназначен для работы с семействами в проектах,
+                                учет версий в проектах, работа с системными семействами,
+                                проверка проектов на актуальность семейств</p>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    </section>
 {% endblock %}
