@@ -32,5 +32,5 @@ def dash_page():
     return statisticsPage.index()
 
 @flask_app.route('/FamiliesNewsPage')
-def FamiliesNewsPage():
+def FamiliesPage():
     return FamiliesNewsPage.index()

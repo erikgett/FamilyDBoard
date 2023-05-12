@@ -12,8 +12,10 @@ from GetStaticticDF import family_history_table, family_news_table, family_table
 FamilyHistoryTable = family_news_table(family_history_table(), family_table())
 FamilyHistoryTable.sort_values(by='Дата', ascending=False, inplace=True)
 
-FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
-                             requests_pathname_prefix='/FamiliesNewsPage/')
+# FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI], requests_pathname_prefix='/FamiliesNewsPage/')
+FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI])
+
+FamilyHistoryTable['id'] = FamilyHistoryTable['Имя семейства']
 
 
 def list_with_unique_coloms(FamilyHistoryTable):
@@ -77,23 +79,48 @@ FamiliesNewsPage.layout = html.Div([
     html.H3(children='Таблица внесенных изменений в репозиторий семейств', style={'textAlign': 'center'}),
     html.H3(children='⠀', style={'textAlign': 'center'}),
 
-    dash_table.DataTable(data=FamilyHistoryTable.to_dict('records'),
-                         columns=[{"name": i, "id": i} for i in FamilyHistoryTable.columns],
-                         page_size=20, id='datatable-interactivity'),
+    dash_table.DataTable(
+        data=FamilyHistoryTable.to_dict('records'),
+        columns=[{"name": i, "id": i} for i in FamilyHistoryTable.columns[:-2]],
+        page_size=20,
+        cell_selectable=True,
+        style_data_conditional=[
+            {
+                "if": {
+                    "state": "active"  # 'active' | 'selected'
+                },
+                "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                "border": "1px solid rgb(0, 116, 217)",
+            },
+            {
+                "if": {
+                    "state": "selected"  # 'active' | 'selected'
+                },
+                "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                "border": "1px solid rgb(0, 116, 217)",
+            }
+
+        ],
+        id='datatable-interactivity'),
+
     html.H3(children='⠀', style={'textAlign': 'center'}),
     dbc.Alert(id='tbl_out', style={'margin': '0px 20px 0px 20px'}, color="light"),
     html.H3(children='⠀', style={'textAlign': 'center'}),
+    html.H3(children='Таблица для конкретного семейства', style={'textAlign': 'center'}),
+    html.H3(children='⠀', style={'textAlign': 'center'}),
+    dash_table.DataTable(
+        data=FamilyHistoryTable.to_dict('records'),
+        page_size=20,
+        id='selectedItem'),
 ])
 
 
 @FamiliesNewsPage.callback((Output('tbl_out', 'children'), Output('datatable-interactivity', 'selected_rows'),),
                            Input('datatable-interactivity', 'active_cell'),
-                           Input('datatable-interactivity', 'data'),
-                           Input('datatable-interactivity', 'derived_viewport_selected_row_ids'),
                            prevent_initial_call=True)
-def update_graphs(active_cell, data, selected_row_ids):
+def update_graphs(active_cell):
     if active_cell:
-        return str(active_cell)+str([active_cell['row']])+str([active_cell['row_id']]), [active_cell['row']]
+        return str(active_cell) + str([active_cell['row']]) + str([active_cell['row_id']]), [active_cell['row']]
     else:
         return "Нажмите на семейство, чтобы увидеть подробную историю о семействе", []
 
@@ -102,6 +129,7 @@ def string_to_pd_date(date):
     return pd.to_datetime(pd.Series(date))[0]
 
 
+# Фильтрация таблицы по календарю и разделам
 @FamiliesNewsPage.callback(
     dash.dependencies.Output("datatable-interactivity", "data"),
     [
@@ -118,5 +146,67 @@ def update_data(start_date, end_date, chapter):
     return date
 
 
+# Выделение необходимых строк
+@FamiliesNewsPage.callback(
+    (
+        Output('datatable-interactivity', 'style_data_conditional'),
+        Output('datatable-interactivity', 'active_cell'),
+        Output('datatable-interactivity', 'selected_cells')
+    ),
+    Input('datatable-interactivity', 'derived_viewport_selected_row_ids'),
+    State('datatable-interactivity', 'derived_viewport_selected_rows'),
+    State('datatable-interactivity', 'active_cell'),
+    prevent_initial_call=True)
+def update_graphs2(selected_row_ids, selected_rows, active_cell):
+    if selected_row_ids:
+        if active_cell:
+            active_cell['row'] = selected_rows[0]
+        else:
+            active_cell = no_update
+        return (
+            [
+                {
+                    "if": {
+                        "filter_query": "{{id}} = '{}'".format(i)
+                    },
+                    "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                    "border": "1px solid rgb(0, 116, 217)",
+                } for i in selected_row_ids
+            ] + [
+                {
+                    "if": {
+                        "state": "active"  # 'active' | 'selected'
+                    },
+                    "backgroundColor": "rgba(0, 116, 217, 0.3)",
+                    "border": "1px solid rgb(0, 116, 217)",
+                }
+            ],
+            active_cell,
+            []
+        )
+    else:
+        return [], no_update, []
+
+
+# Фильтрация таблицы по выбранному семейству в другой таблице
+@FamiliesNewsPage.callback(
+    dash.dependencies.Output("selectedItem", "data"),
+    [
+        Input('datatable-interactivity', 'active_cell'),
+    ])
+
+def updateFamilyItem( active_cell):
+    try:
+        familyName = active_cell['row_id']
+        if familyName == None:
+            familyName =''
+    except: familyName =''
+
+    out_df = FamilyHistoryTable[FamilyHistoryTable['Имя семейства'] == familyName]
+    date = out_df.to_dict("records")
+    return date
+
 if __name__ == '__main__':
-    FamiliesNewsPage.run_server(debug=False, host='0.0.0.0')
+    FamiliesNewsPage.run_server(debug=False)
+
+
