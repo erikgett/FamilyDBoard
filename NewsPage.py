@@ -12,7 +12,8 @@ from GetStaticticDF import family_history_table, family_news_table, family_table
 FamilyHistoryTable = family_news_table(family_history_table(), family_table())
 FamilyHistoryTable.sort_values(by='Дата', ascending=False, inplace=True)
 
-FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI], requests_pathname_prefix='/FamiliesNewsPage/')
+FamiliesNewsPage = dash.Dash(__name__, external_stylesheets=[dbc.themes.YETI],
+                             requests_pathname_prefix='/FamiliesNewsPage/')
 
 
 FamilyHistoryTable['id'] = FamilyHistoryTable['Имя семейства']

@@ -16,4 +16,6 @@ application.wsgi_app = DispatcherMiddleware(flask_app, {
 run_with_ngrok(application)
 
 if __name__ == '__main__':
+    run_with_ngrok(application)
     application.run()
+
